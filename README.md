@@ -8,9 +8,9 @@ Configure a Plex server connection, library, and API credential in Stashd. The
 plugin uses the granted connection and credential; it does not access core
 records or the Vault directly.
 
-Install as `stashd/plex`. Run the provider contract check with `./tests/run.sh`;
-application lifecycle coverage belongs to the core integration suite.
+Install as `stashd/plex`. Run `composer test`; application lifecycle coverage
+belongs to the core integration suite.
 
 ## Release artifact
 
-Run `tools/build-oci.sh out/plugin.oci` after installing production dependencies. The output is an OCI image layout; helper-bearing plugins require pinned executable payloads through `PLUGIN_HELPERS_DIR`.
+Core materializes this package from its locked Composer graph; this provider declares no helpers.

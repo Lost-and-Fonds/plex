@@ -151,6 +151,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
     private function parseXml(string $body): \SimpleXMLElement
     {
         $previous = libxml_use_internal_errors(true);
+
         try {
             $xml = simplexml_load_string($body, \SimpleXMLElement::class, LIBXML_NONET | LIBXML_NOCDATA);
         } finally {
@@ -182,7 +183,6 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
         return null;
     }
 
-    /** @param list<Sdk\Source> $sources */
     private function season(Sdk\PublishRequest $request, ?string $sourceReference): int
     {
         foreach ($request->sources as $source) {

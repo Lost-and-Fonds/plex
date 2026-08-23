@@ -1,5 +1,7 @@
 # Plex plugin instructions
 
 This repository owns Plex protocol behavior and the plugin package payload. It
-must not import Stashd core. Run `./tests/run.sh` for provider checks; core owns
-PostgreSQL lifecycle and plugin-runtime integration checks.
+must not import Stashd core. Core owns PostgreSQL lifecycle and plugin-runtime
+integration checks. Use PHP 8.5,
+PER-CS3, strict PSR-4, and code-as-paragraphs vertical spacing. Run `composer
+lint`, `composer test`, and `composer test:static`.
