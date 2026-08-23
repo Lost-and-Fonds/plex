@@ -2,7 +2,7 @@
   "id": "plex",
   "broadcast_key": "plex",
   "name": "Plex Broadcast",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "application_runtime": "native",
   "runtime": "php",
   "api_version": "0.1",
