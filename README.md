@@ -1,6 +1,6 @@
 # Stashd Plex plugin
 
-Native Plex Broadcast plugin for Stashd. It publishes eligible Vault video and
+Plex Broadcast plugin for Stashd. It publishes eligible Vault video and
 caption assets into a rebuildable Plex-compatible layout and can test, discover,
 and refresh a configured Plex server.
 

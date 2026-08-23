@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PlexNative;
+namespace Plex;
 
 use RuntimeException;
 use Stashd\PluginSdk as Sdk;

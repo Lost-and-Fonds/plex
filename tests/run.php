@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use PlexNative\PlexBroadcast;
+use Plex\PlexBroadcast;
 use Stashd\PluginSdk as Sdk;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';

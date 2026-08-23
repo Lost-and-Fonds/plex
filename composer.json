@@ -1,6 +1,6 @@
 {
   "name": "stashd/plex",
-  "description": "Native Plex Broadcast plugin for Stashd",
+  "description": "Plex Broadcast plugin for Stashd",
   "type": "stashd-plugin",
   "license": "MIT",
   "require": {
@@ -9,12 +9,12 @@
   },
   "autoload": {
     "psr-4": {
-      "PlexNative\\": "src/"
+      "Plex\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PlexNative\\Tests\\": "tests/"
+      "Plex\\Tests\\": "tests/"
     }
   },
   "extra": {
