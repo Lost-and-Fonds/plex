@@ -28,8 +28,10 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
         $artifact = $staging->write('tvshow.nfo', $nfo, 'application/xml');
 
         $files = [];
+
         foreach ($request->items as $index => $item) {
             $video = $this->resource($item, 'video');
+
             if ($video === null) {
                 continue;
             }
@@ -42,6 +44,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
 
             if (($this->settingText($request->settings, 'captions') ?? 'off') !== 'off') {
                 $subtitle = $this->resource($item, 'subtitle');
+
                 if ($subtitle !== null) {
                     $language = $this->captionLanguage($request->settings);
                     $files[] = new Sdk\PublishedFile($item->id, $subtitle->reference, $base . '.' . $language . '.vtt');
@@ -55,6 +58,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
     public function finalize(Sdk\FinalizationRequest $request, Sdk\PluginContext $context): Sdk\Publication
     {
         $server = $this->settingText($request->request->settings, 'server_url');
+
         if ($server === null) {
             throw new RuntimeException('Plex server URL is not configured');
         }
@@ -75,6 +79,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
     public function operation(Sdk\OperationRequest $request, Sdk\PluginContext $context): Sdk\OperationResult
     {
         $server = $this->settingText($request->settings, 'server_url');
+
         if ($server === null) {
             throw new RuntimeException('Plex server URL is not configured');
         }
@@ -86,10 +91,12 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
         };
         $response = $context->http->request('GET', rtrim($server, '/') . $path, [], null, $this->credential($request->settings));
         $this->requireSuccess($response->status, 'Plex request');
+
         if ($request->name === 'refresh-library') {
             return new Sdk\OperationResult(values: [new Sdk\Setting('ok', Sdk\OptionValue::text('true'))]);
         }
         $xml = $this->parseXml($response->body());
+
         if ($request->name === 'test-connection') {
             return new Sdk\OperationResult(values: [
                 new Sdk\Setting('ok', Sdk\OptionValue::text('true')),
@@ -98,8 +105,10 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
             ]);
         }
         $choices = [];
+
         foreach ($xml->Directory as $directory) {
             $value = trim((string) ($directory['key'] ?? ''));
+
             if ($value === '') {
                 continue;
             }
@@ -158,6 +167,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
             libxml_clear_errors();
             libxml_use_internal_errors($previous);
         }
+
         if (! $xml instanceof \SimpleXMLElement || $xml->getName() !== 'MediaContainer') {
             throw new RuntimeException('Plex returned invalid XML');
         }
