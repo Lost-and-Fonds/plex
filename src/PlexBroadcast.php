@@ -6,6 +6,7 @@ namespace Plex;
 
 use RuntimeException;
 use Stashd\PluginSdk as Sdk;
+use Uri\Rfc3986\Uri;
 
 final class PlexBroadcast implements Sdk\BroadcastPlugin
 {
@@ -65,7 +66,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
         $library = $this->library($request->request->settings);
         $response = $context->http->request(
             'GET',
-            rtrim($server, '/') . '/library/sections/' . rawurlencode($library) . '/refresh',
+            $this->endpoint($server, '/library/sections/' . rawurlencode($library) . '/refresh'),
             [],
             null,
             $this->credential($request->request->settings),
@@ -89,7 +90,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
             'refresh-library' => '/library/sections/' . rawurlencode($this->library($request->settings)) . '/refresh',
             default => throw new RuntimeException('Unsupported external operation'),
         };
-        $response = $context->http->request('GET', rtrim($server, '/') . $path, [], null, $this->credential($request->settings));
+        $response = $context->http->request('GET', $this->endpoint($server, $path), [], null, $this->credential($request->settings));
         $this->requireSuccess($response->status, 'Plex request');
 
         if ($request->name === 'refresh-library') {
@@ -180,6 +181,13 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
         if ($status < 200 || $status >= 300) {
             throw new RuntimeException($operation . ' returned HTTP ' . $status);
         }
+    }
+
+    private function endpoint(string $server, string $path): string
+    {
+        $uri = Uri::parse(rtrim($server, '/') . '/' . ltrim($path, '/'));
+
+        return $uri?->toString() ?? throw new RuntimeException('Plex server URL is invalid');
     }
 
     private function resource(Sdk\Item $item, string $kind): ?Sdk\ItemResource
