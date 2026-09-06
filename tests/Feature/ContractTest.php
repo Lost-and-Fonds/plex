@@ -68,6 +68,18 @@ it('preserves the Plex provider contract', function (): void {
     plexAssert(($publication->files[0]->relativePath ?? null) === 'Season 03/S03E001 - A_Title.webm', 'video layout changed');
     plexAssert(($publication->files[1]->relativePath ?? null) === 'Season 03/S03E001 - A_Title.en.vtt', 'caption layout changed');
 
+    $singleSourceRequest = new Sdk\PublishRequest('broadcast-1', $settings, [$source], [
+        new Sdk\Item('item-1', 'A/Title', [new Sdk\ItemResource('asset-1', 'video', mediaType: 'video/webm')]),
+    ], new PlexFixtureStaging());
+    $singleSource = $plugin->publish($singleSourceRequest);
+    plexAssert(($singleSource->files[0]->relativePath ?? null) === 'Season 03/S03E001 - A_Title.webm', 'single-source season fallback failed');
+
+    $topLevelRequest = new Sdk\PublishRequest('broadcast-1', [...$settings, new Sdk\Setting('season', Sdk\OptionValue::number(4))], [$source], [
+        new Sdk\Item('item-1', 'A/Title', [new Sdk\ItemResource('asset-1', 'video', mediaType: 'video/webm')]),
+    ], new PlexFixtureStaging());
+    $topLevel = $plugin->publish($topLevelRequest);
+    plexAssert(($topLevel->files[0]->relativePath ?? null) === 'Season 04/S04E001 - A_Title.webm', 'top-level season override failed');
+
     $http = new PlexFixtureHttp();
     $context = new Sdk\PluginContext(http: $http);
     $operation = $plugin->operation(new Sdk\OperationRequest('discover-libraries', $settings), $context);

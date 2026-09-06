@@ -133,18 +133,6 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
     }
 
     /** @param list<Sdk\Setting> $settings */
-    private function settingNumber(array $settings, string $key): ?int
-    {
-        foreach ($settings as $setting) {
-            if ($setting->key === $key && $setting->value->kind === 'number') {
-                return (int) $setting->value->value;
-            }
-        }
-
-        return null;
-    }
-
-    /** @param list<Sdk\Setting> $settings */
     private function credential(array $settings): string
     {
         return $this->settingText($settings, 'credential_name') ?? 'plex-api-token';
@@ -203,13 +191,31 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
 
     private function season(Sdk\PublishRequest $request, ?string $sourceReference): int
     {
-        foreach ($request->sources as $source) {
-            if ($source->reference === $sourceReference) {
-                return max(1, $this->settingNumber($source->settings, 'season') ?? 1);
+        foreach ($request->settings as $setting) {
+            if ($setting->key === 'season' && $setting->value->kind === 'number') {
+                return max(1, (int) $setting->value->value);
             }
         }
 
-        return 1;
+        $fallbacks = [];
+
+        foreach ($request->sources as $source) {
+            foreach ($source->settings as $setting) {
+                if ($setting->key !== 'season' || $setting->value->kind !== 'number') {
+                    continue;
+                }
+
+                $season = max(1, (int) $setting->value->value);
+
+                if ($source->reference === $sourceReference) {
+                    return $season;
+                }
+
+                $fallbacks[] = $season;
+            }
+        }
+
+        return count($fallbacks) === 1 ? $fallbacks[0] : 1;
     }
 
     /** @param list<Sdk\Setting> $settings */
