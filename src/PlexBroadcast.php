@@ -30,7 +30,7 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
 
         $files = [];
 
-        foreach ($request->items as $index => $item) {
+        foreach ($this->orderedItems($request->items) as $index => $item) {
             $video = $this->resource($item, 'video');
 
             if ($video === null) {
@@ -54,6 +54,21 @@ final class PlexBroadcast implements Sdk\BroadcastPlugin
         }
 
         return new Sdk\Publication(new Sdk\Artifact($artifact->reference, $artifact->mediaType, $artifact->sizeBytes), $files);
+    }
+
+    /** @param list<Sdk\Item> $items
+     * @return list<Sdk\Item>
+     */
+    private function orderedItems(array $items): array
+    {
+        usort($items, static function (Sdk\Item $left, Sdk\Item $right): int {
+            $leftTime = $left->publishedAt === null ? PHP_INT_MAX : strtotime($left->publishedAt);
+            $rightTime = $right->publishedAt === null ? PHP_INT_MAX : strtotime($right->publishedAt);
+
+            return ($leftTime === false ? PHP_INT_MAX : $leftTime) <=> ($rightTime === false ? PHP_INT_MAX : $rightTime);
+        });
+
+        return $items;
     }
 
     public function finalize(Sdk\FinalizationRequest $request, Sdk\PluginContext $context): Sdk\Publication

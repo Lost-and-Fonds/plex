@@ -68,6 +68,13 @@ it('preserves the Plex provider contract', function (): void {
     plexAssert(($publication->files[0]->relativePath ?? null) === 'Season 03/S03E001 - A_Title.webm', 'video layout changed');
     plexAssert(($publication->files[1]->relativePath ?? null) === 'Season 03/S03E001 - A_Title.en.vtt', 'caption layout changed');
 
+    $ordered = $plugin->publish(new Sdk\PublishRequest('broadcast-order', [new Sdk\Setting('season', Sdk\OptionValue::number(4))], [], [
+        new Sdk\Item('newer', 'Newer', [new Sdk\ItemResource('newer-asset', 'video')], publishedAt: '2026-08-31T19:00:25+00:00'),
+        new Sdk\Item('older', 'Older', [new Sdk\ItemResource('older-asset', 'video')], publishedAt: '2026-08-24T19:00:25+00:00'),
+    ], new PlexFixtureStaging()));
+    plexAssert(($ordered->files[0]->relativePath ?? null) === 'Season 04/S04E001 - Older.mp4', 'items are not ordered chronologically');
+    plexAssert(($ordered->files[1]->relativePath ?? null) === 'Season 04/S04E002 - Newer.mp4', 'items are not ordered chronologically');
+
     $singleSourceRequest = new Sdk\PublishRequest('broadcast-1', $settings, [$source], [
         new Sdk\Item('item-1', 'A/Title', [new Sdk\ItemResource('asset-1', 'video', mediaType: 'video/webm')]),
     ], new PlexFixtureStaging());
