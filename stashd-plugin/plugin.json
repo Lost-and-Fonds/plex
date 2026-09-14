@@ -2,7 +2,7 @@
   "id": "plex",
   "broadcast_key": "plex",
   "name": "Plex Broadcast",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "application_runtime": "plugin",
   "runtime": "php",
   "api_version": "0.1",
@@ -19,6 +19,7 @@
   "prunes_after_publish": true,
   "connection_setting_key": "media_server_connection_id",
   "library_setting_key": "library_id",
+  "configuration": {"message": "Connect a media server before rebuilding this Broadcast.", "action_url": "/settings/connections"},
   "credential": {"name": "plex-api-token", "parameter": "X-Plex-Token", "placement": "query"},
   "operations": {
     "test_connection": "test-connection",
