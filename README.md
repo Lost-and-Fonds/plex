@@ -10,8 +10,7 @@ records or the Vault directly.
 
 Production installation uses Stashd's OCI installer (`stashd:plugin-install
 ghcr.io/lost-and-fonds/plex:<version>`). Composer is for local plugin
-development only. Run `composer test`; application lifecycle coverage belongs
-to the core integration suite.
+development only.
 
 ## Release artifact
 
